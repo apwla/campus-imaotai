@@ -86,11 +86,15 @@ module.exports = {
       })
     ],
   },
+  // 用chainWebpack函数直接对webpack的内部配置进行链式操作。chainWebpack提供了一个更细粒度的控制方式，允许开发者修改loader和插件等配置
   chainWebpack(config) {
+    // 删除预加载和预取插件: 这两行代码删除了webpack默认添加的preload和prefetch插件。这些插件通常用于告诉浏览器预先加载或预取某些资源，以加快后续加载时间。删除这些可能是为了优化加载策略或避免不必要的资源加载。
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
-    // set svg-sprite-loader
+    // 配置SVG精灵加载器 start...     set svg-sprite-loader
+    // 以下配置首先排除了src/assets/icons目录下的SVG文件应用默认的SVG处理规则，然后为这个目录下的SVG文件设置了svg-sprite-loader，使得这些SVG文件可以作为精灵图使用。
+    // 这种方式便于管理和使用SVG图标，通过symbolId配置，可以轻松引用SVG图标。
     config.module
       .rule('svg')
       .exclude.add(resolve('src/assets/icons'))
@@ -107,8 +111,12 @@ module.exports = {
       })
       .end()
 
+    // 配置SVG精灵加载器 end...
+
+    // 生产环境配置
     config
       .when(process.env.NODE_ENV !== 'development',
+        // 使用ScriptExtHtmlWebpackPlugin插件优化<script>标签的加载方式，例如，通过将运行时脚本内联到HTML中来减少请求。
         config => {
           config
             .plugin('ScriptExtHtmlWebpackPlugin')
@@ -118,6 +126,7 @@ module.exports = {
               inline: /runtime\..*\.js$/
             }])
             .end()
+          // splitChunks配置用于优化包的大小，将来自node_modules的依赖库、ElementUI组件库、以及在src/components目录下被多个模块共享的组件分别打包成不同的块。
           config
             .optimization.splitChunks({
               chunks: 'all',
@@ -142,8 +151,10 @@ module.exports = {
                 }
               }
             })
+          // runtimeChunk: 'single'配置用于为每个入口创建一个只包含运行时的单独文件，优化长期缓存。
           config.optimization.runtimeChunk('single'),
           {
+             // 防爬虫文件配置
              from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
              to: './' //到根目录下
           }
