@@ -77,5 +77,11 @@ public class CampusIMTTask {
         imtService.appointmentResults();
     }
 
-
+//    // 每5s执行一次
+//    @Async
+//    @Scheduled(cron = "0/5 * * * * ?")
+//    public void test() {
+//        System.out.println(System.currentTimeMillis());
+//        System.out.println("任务已执行");
+//    }
 }
