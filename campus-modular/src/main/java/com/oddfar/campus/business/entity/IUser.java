@@ -175,7 +175,7 @@ public class IUser extends BaseEntity {
     }
 
     public int getMinute() {
-        if (minute > 59 || minute < 1) {
+        if (minute > 59 || minute < -1) {
             this.minute = 5;
         }
         return minute;
