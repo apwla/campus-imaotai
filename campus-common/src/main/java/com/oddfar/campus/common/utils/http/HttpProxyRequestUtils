@@ -1,0 +1,63 @@
+package com.oddfar.campus.common.utils.http;
+
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpUtil;
+
+/**
+ * 通过代理访问接口
+ *
+ */
+public class HttpProxyRequestUtils {
+
+    private static final String PROXY_HOST = "proxyxx.xxx.com";
+
+    private static final int PROXY_PORT = Integer.parseInt("8080");
+
+    private static final String PROXY_USER = "xxx";
+
+    private static final String PROXY_PASS = "xxx";
+
+
+    /**
+     * 获取经过代理的HttpRequest - POST
+     *
+     * @param destUrl 目的服务器的url
+     * @return 经过代理的HttpRequest
+     */
+    public static HttpRequest getHttpProxyPostRequest(String destUrl) {
+        // https://app.moutai519.com.cn/xhr/front/user/register/vcode
+        HttpRequest request = HttpUtil.createPost(destUrl)
+                .setHttpProxy(PROXY_HOST, PROXY_PORT)
+                .basicAuth(PROXY_USER, PROXY_PASS);
+        return request;
+    }
+
+    /**
+     * 获取经过代理的HttpRequest - GET
+     *
+     * @param destUrl 目的服务器的url
+     * @return 经过代理的HttpRequest
+     */
+    public static HttpRequest getHttpProxyGetRequest(String destUrl) {
+        // https://app.moutai519.com.cn/xhr/front/user/register/vcode
+        HttpRequest request = HttpUtil.createGet(destUrl)
+                .setHttpProxy(PROXY_HOST, PROXY_PORT)
+                .basicAuth(PROXY_USER, PROXY_PASS);
+        return request;
+    }
+
+    /**
+     * 获取经过代理的HttpRequest访问服务器后的响应
+     *
+     * @param request
+     * @return
+     */
+    public static String getHttpProxyResponse(HttpRequest request) {
+        String res = request.execute().body();
+        return res;
+    }
+
+    public static void main(String[] args) {
+        // ...
+    }
+}
